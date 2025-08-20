@@ -303,6 +303,40 @@ function activate(context) {
             outputChannel.appendLine(`Failed to test original model: ${error}`);
         }
     });
+    let runUnitTest = vscode.commands.registerCommand('extension.runUnitTest', async () => {
+        try {
+            const scriptPath = path.join(context.extensionPath, 'scripts', 'run_unit_tests.py');
+            if (!fs.existsSync(scriptPath)) {
+                vscode.window.showErrorMessage('run_unit_tests.py not found at scripts/run_unit_tests.py');
+                return;
+            }
+            outputChannel.clear();
+            outputChannel.show();
+            outputChannel.appendLine('Running Unit Tests...');
+            outputChannel.appendLine(`Script file: ${scriptPath}`);
+            outputChannel.appendLine('='.repeat(60));
+            const venvPython = path.join(vscode.workspace.workspaceFolders?.[0].uri.fsPath || '.', '.venv', 'bin', 'python');
+            const pythonCmd = fs.existsSync(venvPython) ? venvPython : 'python3';
+            (0, child_process_1.exec)(`"${pythonCmd}" "${scriptPath}"`, {
+                cwd: path.dirname(scriptPath),
+            }, (error, stdout, stderr) => {
+                if (stderr) {
+                    outputChannel.appendLine(`Warnings/Errors:\n${stderr}`);
+                }
+                if (stdout) {
+                    outputChannel.appendLine(stdout);
+                }
+                if (error) {
+                    outputChannel.appendLine(`Error: ${error.message}`);
+                }
+                outputChannel.appendLine('='.repeat(60));
+                outputChannel.appendLine('Unit tests completed!');
+            });
+        }
+        catch (error) {
+            outputChannel.appendLine(`Failed to run unit tests: ${error}`);
+        }
+    });
     // Command to run Python script with user input
     let runPythonWithInput = vscode.commands.registerCommand('extension.runPythonWithInput', async () => {
         try {
@@ -365,7 +399,7 @@ function activate(context) {
             });
         });
     });
-    context.subscriptions.push(runPythonScript, runPytorchExport, convertGraphWithGemini, exportAndConvertGraphWithGemini, testOriginalModel, runPythonWithInput, runCurrentPythonFile, outputChannel);
+    context.subscriptions.push(runPythonScript, runPytorchExport, convertGraphWithGemini, exportAndConvertGraphWithGemini, testOriginalModel, runUnitTest, runPythonWithInput, runCurrentPythonFile, outputChannel);
 }
 function deactivate() { }
 //# sourceMappingURL=extension.js.map

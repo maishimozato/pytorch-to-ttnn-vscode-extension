@@ -20,15 +20,21 @@ def capture_graph_backend(gm, example_inputs):
     return gm
 
 def test_resnet(model, inputs):
-    # Export the model to get the FX graph module
-    exported_program = torch.export.export(model, (inputs,), strict=False)
-    gm = exported_program.module()
-    
-    # Save the graph module using our capture function
-    capture_graph_backend(gm, (inputs,))
-    
-    # Optionally, you can still run the exported model
-    output = exported_program.module()(inputs)
+    if isinstance(inputs, dict):
+        exported_program = torch.export.export(model, (), kwargs=inputs, strict=False)
+        gm = exported_program.module()
+        capture_graph_backend(gm, (inputs,))
+        output = exported_program.module()(**inputs)
+    else:
+        # Export the model to get the FX graph module
+        exported_program = torch.export.export(model, (inputs,), strict=False)
+        gm = exported_program.module()
+
+        # Save the graph module using our capture function
+        capture_graph_backend(gm, (inputs,))
+        
+        # Optionally, you can still run the exported model
+        output = exported_program.module()(inputs)
     
     return output
 
@@ -44,7 +50,14 @@ def main():
             if model is not None and inputs is not None:
                 print("Found model and inputs, running PyTorch export...")
                 output = test_resnet(model, inputs)
-                print(f"Export completed successfully! Output shape: {output.shape}")
+                if hasattr(output, "shape"):
+                    print(f"Export completed successfully! Output shape: {output.shape}")
+                elif hasattr(output, "size"):
+                    print(f"Export completed successfully! Output size: {output.size()}")
+                elif isinstance(output, dict):
+                    print(f"Export completed successfully! Output is a dict with keys: {list(output.keys())}")
+                else:
+                    print(f"Export completed successfully! Output type: {type(output)}")
             else:
                 print("Error: 'model' and 'inputs' variables not found in the file")
         else:

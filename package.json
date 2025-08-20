@@ -4,7 +4,7 @@
     "description": "Extension that converts PyTorch models to graphs",
     "version": "0.0.1",
     "engines": {
-        "vscode": "^1.74.0"
+        "vscode": "^1.75.0"
     },
     "categories": ["Other"],
     "activationEvents": [],
@@ -26,6 +26,10 @@
             {
                 "command": "extension.runPythonWithInput",
                 "title": "Run Python Code"
+            },
+            {
+                "command": "extension.runUnitTest",
+                "title": "Run Unit Tests"
             },
             {
                 "command": "extension.runCurrentPythonFile",

@@ -9,11 +9,10 @@ def split_lines(text, n):
         yield ''.join(lines[i:i+n])
 
 def convert_pytorch_to_ttnn(input_file: str, output_file: str, api_docs_file: str = "api_docs.json"):
-    workspace_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    load_dotenv(os.path.join(workspace_root, '.env'))
+    load_dotenv(os.path.join(os.path.dirname(os.path.dirname(input_file)), '.env'))
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        raise ValueError("GEMINI_API_KEY not found in .env file")
+        raise ValueError("GEMINI_API_KEY not found in .env file. Please create a .env file with GEMINI_API_KEY=your_key in your workspace root.")
 
     url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
     headers = {
