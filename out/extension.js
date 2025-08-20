@@ -149,7 +149,7 @@ function activate(context) {
             outputChannel.appendLine(`Input file: ${inputPath}`);
             outputChannel.appendLine(`Output file: ${outputPath}`);
             outputChannel.appendLine('='.repeat(60));
-            const venvPython = path.join(((_c = vscode.workspace.workspaceFolders) === null || _c === void 0 ? void 0 : _c[0].uri.fsPath) || '.', '.venv', 'bin', 'python');
+            const venvPython = path.join(((_c = vscode.workspace.workspaceFolders) === null || _c === void 0 ? void 0 : _c[0].uri.fsPath) || '.', '.venv', 'venv', 'bin', 'python');
             const pythonCmd = fs.existsSync(venvPython) ? venvPython : 'python3';
             (0, child_process_1.exec)(`"${pythonCmd}" "${scriptPath}" "${inputPath}" "${outputPath}"`, {
                 cwd: (_d = vscode.workspace.workspaceFolders) === null || _d === void 0 ? void 0 : _d[0].uri.fsPath,

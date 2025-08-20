@@ -149,11 +149,11 @@ function activate(context) {
             outputChannel.appendLine(`Input file: ${inputPath}`);
             outputChannel.appendLine(`Output file: ${outputPath}`);
             outputChannel.appendLine('='.repeat(60));
-            const venvPython = path.join(vscode.workspace.workspaceFolders?.[0].uri.fsPath || '.', '.venv', 'bin', 'python');
+            const venvPython = path.join(vscode.workspace.workspaceFolders?.[0].uri.fsPath || '.', '.venv', 'venv', 'bin', 'python');
             const pythonCmd = fs.existsSync(venvPython) ? venvPython : 'python3';
+            const workspaceRoot = vscode.workspace.workspaceFolders?.[0].uri.fsPath || '.';
             (0, child_process_1.exec)(`"${pythonCmd}" "${scriptPath}" "${inputPath}" "${outputPath}"`, {
-                cwd: vscode.workspace.workspaceFolders?.[0].uri.fsPath,
-                env: { ...process.env, TT_METAL_DEVICE: 'emulate' }
+                cwd: workspaceRoot,
             }, (error, stdout, stderr) => {
                 if (stderr) {
                     outputChannel.appendLine(`Warnings/Errors:\n${stderr}`);

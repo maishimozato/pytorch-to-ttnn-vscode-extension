@@ -9,7 +9,8 @@ def split_lines(text, n):
         yield ''.join(lines[i:i+n])
 
 def convert_pytorch_to_ttnn(input_file: str, output_file: str, api_docs_file: str = "api_docs.json"):
-    load_dotenv()
+    workspace_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    load_dotenv(os.path.join(workspace_root, '.env'))
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         raise ValueError("GEMINI_API_KEY not found in .env file")
